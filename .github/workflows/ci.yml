@@ -28,18 +28,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Install Node.js version 20 so we can run JavaScript/TypeScript
-      # cache: 'npm' speeds things up by saving downloaded packages between runs
+      # Step 2: Install Node.js version 24 (runner default is Node 24)
+      # Use `npm ci` below which requires a lockfile (package-lock.json) for reproducible installs
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '24'
 
       # Step 3: Install all project dependencies listed in package.json
       # This also installs Playwright, TypeScript, ESLint and everything else needed
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       # Step 4: Check that all TypeScript code compiles without errors
       # If there is a type error anywhere in the code, this step will fail
