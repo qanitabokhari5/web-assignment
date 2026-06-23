@@ -22,6 +22,13 @@ jobs:
   test:
     # Use the latest Ubuntu Linux machine provided by GitHub (free for public repos)
     runs-on: ubuntu-latest
+    env:
+      SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
+      SAUCE_PASSWORD: ${{ secrets.SAUCE_PASSWORD }}
+      AUTOMATION_STORE_URL: ${{ secrets.AUTOMATION_STORE_URL }}
+      AUTOMATION_STORE_USERNAME: ${{ secrets.AUTOMATION_STORE_USERNAME }}
+      AUTOMATION_STORE_PASSWORD: ${{ secrets.AUTOMATION_STORE_PASSWORD }}
+      SAUCE_URL: ${{ secrets.SAUCE_URL }}
 
     steps:
       # Step 1: Download the code from the repository onto the machine
@@ -35,12 +42,16 @@ jobs:
         with:
           node-version: '24'
 
-      # Step 3: Install all project dependencies listed in package.json
+      # Step 3: Prepare artifact directories so upload-artifact does not warn if they are created later
+      - name: Prepare artifact directories
+        run: mkdir -p playwright-report test-results
+
+      # Step 4: Install all project dependencies listed in package.json
       # This also installs Playwright, TypeScript, ESLint and everything else needed
       - name: Install dependencies
         run: npm ci
 
-      # Step 4: Check that all TypeScript code compiles without errors
+      # Step 5: Check that all TypeScript code compiles without errors
       # If there is a type error anywhere in the code, this step will fail
       - name: Run TypeScript check
         run: npm run build
