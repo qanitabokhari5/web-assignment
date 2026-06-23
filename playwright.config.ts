@@ -16,8 +16,12 @@ import path from 'path';
 // TEST_TIMEOUT       = max time one full test is allowed to take
 import { ACTION_TIMEOUT, EXPECT_TIMEOUT, NAVIGATION_TIMEOUT, TEST_TIMEOUT } from 'vasu-playwright-utils';
 
-// Read the .env file and make its values available via process.env
-dotenv.config({ path: '.env' });
+// Read the .env file and make its values available via process.env when
+// running locally. In CI we provide environment variables via the workflow
+// (GitHub Secrets), and skipping dotenv avoids verbose injected-env logs.
+if (!process.env.CI) {
+  dotenv.config({ path: '.env' });
+}
 
 // The website URL to test. Reads from .env if set, otherwise defaults to Sauce Demo
 export const BASE_URL = process.env.URL || 'https://www.saucedemo.com';
