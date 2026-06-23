@@ -1,0 +1,73 @@
+# This is the CI (Continuous Integration) pipeline file.
+# It automatically runs your tests on GitHub every time someone pushes code
+# or opens a Pull Request — so you catch broken tests before merging.
+
+name: CI
+
+# When should this pipeline run?
+on:
+  push:
+    # Run on every push to any branch (including main)
+    branches:
+      - main
+      - '**'
+  pull_request:
+    # Also run when a Pull Request is opened or updated on any branch
+    branches:
+      - main
+      - '**'
+
+# A "job" is a set of steps that run one after another on a fresh machine
+jobs:
+  test:
+    # Use the latest Ubuntu Linux machine provided by GitHub (free for public repos)
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Download the code from the repository onto the machine
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Node.js version 20 so we can run JavaScript/TypeScript
+      # cache: 'npm' speeds things up by saving downloaded packages between runs
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # Step 3: Install all project dependencies listed in package.json
+      # This also installs Playwright, TypeScript, ESLint and everything else needed
+      - name: Install dependencies
+        run: npm install
+
+      # Step 4: Check that all TypeScript code compiles without errors
+      # If there is a type error anywhere in the code, this step will fail
+      - name: Run TypeScript check
+        run: npm run build
+
+      # Step 5: Run all Playwright tests
+      # If any test fails, this step fails and GitHub marks the pipeline as failed
+      - name: Run Playwright tests
+        run: npm test
+
+      # Step 6: Upload the HTML test report so you can view it on GitHub
+      # if: always() means this runs even if the tests failed — so you can see what went wrong
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          # The name shown in GitHub under the "Artifacts" section of the run
+          name: playwright-report
+          # The folder to upload — this is where Playwright saves the HTML report
+          path: playwright-report
+
+      # Step 7: Upload raw test result files (screenshots, traces) for failed tests
+      # Useful for debugging — you can download and open traces with: npx playwright show-trace
+      - name: Upload test-results artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          # The folder where Playwright saves screenshots and trace files on failure
+          path: test-results

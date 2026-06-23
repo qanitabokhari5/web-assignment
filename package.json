@@ -1,0 +1,39 @@
+{
+  "name": "playwright-framework",
+  "version": "1.0.0",
+  "description": "Playwright TypeScript framework for Sauce Demo website testing",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:automationstore": "playwright test tests/specs/automationstore-new.spec.ts --project=chromium --project=firefox --project=webkit",
+    "test:multi": "playwright test --project=chromium,firefox,webkit",
+    "test:chromium": "playwright test --retries 0 --project=chromiumheadless",
+    "test:chromium-headed": "playwright test -j 1 --retries 0 --project=chromium",
+    "local": "playwright test -j 1 --retries 0 --project=chromium",
+    "test:smoke": "playwright test --project=chromiumheadless -g '@smoke'",
+    "test:feature": "cucumber-js --require-module ts-node/register --require tests/features/steps/**/*.ts --format progress --publish-quiet features",
+    "report": "playwright show-report playwright-report",
+    "lint": "eslint 'tests/**/*.ts' 'test-setup/**/*.ts' 'playwright.config.ts'",
+    "lint:fix": "eslint 'tests/**/*.ts' 'test-setup/**/*.ts' 'playwright.config.ts' --fix",
+    "format": "prettier --write 'tests/**/*.ts' 'test-setup/**/*.ts' 'playwright.config.ts' '**/*.json' '**/*.md' '!package-lock.json'",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@playwright/test": "^1.46.1",
+    "@types/node": "^20.14.10",
+    "@typescript-eslint/eslint-plugin": "^8.1.0",
+    "@typescript-eslint/parser": "^8.1.0",
+    "eslint": "^9.9.0",
+    "eslint-plugin-import": "^2.29.1",
+    "@cucumber/cucumber": "^9.0.0",
+    "ts-node": "^10.9.1",
+    "eslint-plugin-jsdoc": "^50.2.2",
+    "eslint-plugin-playwright": "^1.6.2",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.5.3",
+    "vasu-playwright-utils": "^1.20.0"
+  },
+  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a"
+}
